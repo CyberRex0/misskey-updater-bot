@@ -49,10 +49,7 @@ async def on_post_note(note):
 
                         # 最新バージョンを要求された場合
                         if '最新' in version:
-                            latest_version = tags[0]['name']
-                            tags = [{
-                                'name': latest_version
-                            }]
+                            version = tags[0]['name']
 
                         for tag in tags:
                             if tag['name'] == version:
