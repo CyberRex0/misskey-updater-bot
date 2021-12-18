@@ -26,14 +26,16 @@ ALLOWED_USERS = [
 
 |項目名|説明|
 |------|------|
-|MISSKEY_INSTANCE|インスタンスのへのホスト名|
+|MISSKEY_INSTANCE|インスタンスのホスト名 ※1|
 |MISSKEY_TOKEN|ボットアカウントのトークン|
 |MISSKEY_DIR|Misskeyソフトウェアが配置されているディレクトリ|
-|UPDATE_SCRIPT_PATH|アップデートスクリプトへの絶対パス ※1|
-|RESTART_SCRIPT_PATH|再起動スクリプトへの絶対パス（任意。空にできます） ※1|
+|UPDATE_SCRIPT_PATH|アップデートスクリプトへの絶対パス ※2|
+|RESTART_SCRIPT_PATH|再起動スクリプトへの絶対パス（任意。空にできます） ※2|
 |ALLOWED_USERS|操作できるユーザーのIDリスト(`,`で区切る)|
 
-※1: スクリプトの実行時、作業ディレクトリは`MISSKEY_DIR`になります
+※1: ローカルで動かす場合は `localhost:3000` という風に指定しても大丈夫です。
+※2: スクリプトの実行時、作業ディレクトリは`MISSKEY_DIR`になります
+
 
 # 使い方
 
