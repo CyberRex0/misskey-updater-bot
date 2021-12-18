@@ -46,7 +46,7 @@ async def on_post_note(note):
                         tags = await r.json()
                         
                         # 最新バージョンを要求された場合
-                        if content.startswith('最新バージョンに') or content.startswith('最新に'):
+                        if '最新' in version:
                             latest_version = tags[0]['name']
                             tags = [{
                                 'name': latest_version
