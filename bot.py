@@ -33,9 +33,9 @@ async def on_post_note(note):
                 text = f'{sa*1000:.2f}ms'
                 msk.notes_create(text=text, reply_id=note['id'])
 
-            update_cmd = re.findall(r'((.*)に|最新(.*)に|最新に)アップデートして', content)
+            update_cmd = re.findall(r'(v(.*)に|最新(.*)に|最新に)アップデートして', content)
             if update_cmd:
-                version = update_cmd[0]
+                version = update_cmd[0][0]
 
                 if not (note['user']['id'] in config.ALLOWED_USERS):
                     msk.notes_create(text='許可されたユーザーのみが実行できます', reply_id=note['id'])
