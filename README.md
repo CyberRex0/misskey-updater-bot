@@ -28,9 +28,9 @@ ALLOWED_USERS = [
 |------|------|
 |MISSKEY_INSTANCE|インスタンスのへのホスト名|
 |MISSKEY_TOKEN|ボットアカウントのトークン|
-|MISSKEY_DIR|Misskeyソフトウェアが配置されているディレクトリ ※1|
+|MISSKEY_DIR|Misskeyソフトウェアが配置されているディレクトリ|
 |UPDATE_SCRIPT_PATH|アップデートスクリプトへの絶対パス ※1|
-|RESTART_SCRIPT_PATH|再起動スクリプトへの絶対パス（任意。空にできます）|
+|RESTART_SCRIPT_PATH|再起動スクリプトへの絶対パス（任意。空にできます） ※1|
 |ALLOWED_USERS|操作できるユーザーのIDリスト(`,`で区切る)|
 
 ※1: スクリプトの実行時、作業ディレクトリは`MISSKEY_DIR`になります
