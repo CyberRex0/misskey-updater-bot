@@ -6,6 +6,7 @@ import datetime
 import sys
 import traceback
 import re
+import math
 
 import config
 
@@ -53,13 +54,18 @@ async def on_post_note(note):
                                 except:
                                     msk.notes_create(text='アップデートできなかった', reply_id=note['id'])
                                     return
-
+                                st = datetime.datetime.utcnow().timestamp()
                                 code = await update_proc.wait()
                                 if code != 0:
                                     msk.notes_create(text=f'アップデートできなかった({code})', reply_id=note['id'])
                                     return
                                 else:
-                                    msk.notes_create(text='アップデートできたよ', reply_id=note['id'])
+                                    nt = datetime.datetime.utcnow().timestamp()
+                                    t = nt - st
+                                    tm = math.floor(t / 60)
+                                    ts = math.floor(t % 60)
+                                    msk.notes_create(text=f'アップデートできたよ (実行時間: {t/60:02.0f}分{t%60:02.0f}秒)\n30秒後に再起動する', reply_id=note['id'])
+                                    await asyncio.sleep(30)
                                     # 任意で再起動スクリプト実行
                                     args = [config.RESTART_SCRIPT_PATH]
                                     await asyncio.create_subprocess_exec('/bin/bash', *args)
