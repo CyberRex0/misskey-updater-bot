@@ -42,5 +42,5 @@ ALLOWED_USERS = [
 ※終了コードはアップデートスクリプトが返してきたものになります。
 
 # ライセンス
-MIT License
-(C)CyberRex
+MIT License<br>
+(c)CyberRex
