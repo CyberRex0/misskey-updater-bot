@@ -7,6 +7,7 @@ import sys
 import traceback
 import re
 import math
+import time
 
 import config
 
@@ -133,6 +134,7 @@ while True:
     except KeyboardInterrupt:
         break
     except:
+        time.sleep(10)
         reconnect_counter += 1
         print('Reconnecting...', end='')
         if reconnect_counter > 10:
