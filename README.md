@@ -1,6 +1,11 @@
 # Misskey Updater Bot
 MisskeyなどのFediverse系SNS経由でインスタンスのMisskeyをアップデートできます。
 
+# 要件
+Python 3.7以降<br>
+必須パッケージ: `websockets` v9.0, `Misskey.py` v4.0.1, `aiohttp` v3.7.4.post0<br>
+※ `pip install -U -r requirements.txt` で一括インストールできます
+
 # 設定
 `bot.py` があるディレクトリに `config.py` を作成します。
 
