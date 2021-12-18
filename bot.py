@@ -69,7 +69,7 @@ async def on_post_note(note):
                                     await asyncio.sleep(30)
                                     # 任意で再起動スクリプト実行
                                     args = [config.RESTART_SCRIPT_PATH]
-                                    await asyncio.create_subprocess_exec('/bin/bash', *args)
+                                    await asyncio.create_subprocess_exec('/bin/bash', *args, cwd=config.MISSKEY_DIR)
                                     return
                                 
                         else:
