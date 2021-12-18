@@ -34,6 +34,11 @@ async def on_post_note(note):
             update_cmd = re.findall(r'v(.*)にアップデートして', content)
             if update_cmd:
                 version = update_cmd[0]
+
+                if not (note['user']['id'] in config.ALLOWED_USERS):
+                    msk.notes_create(text='許可されたユーザーのみが実行できます', reply_id=note['id'])
+                    return
+
                 async with aiohttp.ClientSession() as session:
                     async with session.get('https://api.github.com/repos/misskey-dev/misskey/tags') as r:
                         tags = await r.json()
