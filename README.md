@@ -20,7 +20,7 @@ UPDATE_SCRIPT_PATH='/path/to/misskey/update.sh'
 RESTART_SCRIPT_PATH='/path/to/misskey/restart.sh' # if needed (optional, nullable)
 
 ALLOWED_USERS = [
-    'xxxxxxxxxxxx' # Your Account IDs here... (separate with ',')
+    'xxxxxxxxxxxx', 'yyyyyyyyyyyyy' # Your Account IDs here... (separate with ',')
 ]
 ```
 
