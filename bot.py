@@ -33,7 +33,7 @@ async def on_post_note(note):
                 text = f'{sa*1000:.2f}ms'
                 msk.notes_create(text=text, reply_id=note['id'])
 
-            update_cmd = re.findall(r'v(.*)にアップデートして', content)
+            update_cmd = re.findall(r'((.*)に|最新(.*)に|最新に)アップデートして', content)
             if update_cmd:
                 version = update_cmd[0]
 
@@ -42,8 +42,16 @@ async def on_post_note(note):
                     return
 
                 async with aiohttp.ClientSession() as session:
-                    async with session.get('https://api.github.com/repos/misskey-dev/misskey/tags') as r:
+                    async with session.get('https://api.github.com/repos/'+ config.GITHUB_RESPOSITORY_NAME +'/tags') as r:
                         tags = await r.json()
+                        
+                        # 最新バージョンを要求された場合
+                        if content.startswith('最新バージョンに') or content.startswith('最新に'):
+                            latest_version = tags[0]['name']
+                            tags = [{
+                                'name': latest_version
+                            }]
+
                         for tag in tags:
                             if tag['name'] == version:
                                 msk.notes_create(text='アップデートやっとく', reply_id=note['id'])
