@@ -1,10 +1,11 @@
 from misskey import Misskey
 import websockets
-import asyncio
+import asyncio, aiohttp
 import json
 import datetime
 import sys
 import traceback
+import re
 
 import config
 
@@ -29,6 +30,38 @@ async def on_post_note(note):
                 sa = nowdate - postdate
                 text = f'{sa*1000:.2f}ms'
                 msk.notes_create(text=text, reply_id=note['id'])
+
+            update_cmd = re.findall(r'v(.*)にアップデートして', content)
+            if update_cmd:
+                version = update_cmd[0]
+                async with aiohttp.ClientSession() as session:
+                    async with session.get('https://api.github.com/repos/misskey-dev/misskey/tags') as r:
+                        tags = await r.json()
+                        for tag in tags:
+                            if tag['name'] == version:
+                                msk.notes_create(text='アップデートやっとく', reply_id=note['id'])
+
+                                args = [config.UPDATE_SCRIPT_PATH, version]
+
+                                try:
+                                    update_proc = await asyncio.create_subprocess_exec('/bin/bash', *args)
+                                except:
+                                    msk.notes_create(text='アップデートできなかった', reply_id=note['id'])
+                                    return
+
+                                code = await update_proc.wait()
+                                if code != 0:
+                                    msk.notes_create(text=f'アップデートできなかった({code})', reply_id=note['id'])
+                                    return
+                                else:
+                                    msk.notes_create(text='アップデートできたよ', reply_id=note['id'])
+                                    # 任意で再起動スクリプト実行
+                                    args = [config.RESTART_SCRIPT_PATH]
+                                    await asyncio.create_subprocess_exec('/bin/bash', *args)
+                                    return
+                                
+                        else:
+                            msk.notes_create(text=f'{version}←そんなの　ない', reply_id=note['id'])
 
 async def on_followed(user):
     try:
@@ -81,4 +114,17 @@ async def main():
                         continue
                 
 
-asyncio.get_event_loop().run_until_complete(main())
+reconnect_counter = 0
+
+while True:
+    try:
+        asyncio.get_event_loop().run_until_complete(main())
+    except KeyboardInterrupt:
+        break
+    except:
+        reconnect_counter += 1
+        print('Reconnecting...', end='')
+        if reconnect_counter > 10:
+            print('Too many reconnects. Exiting.')
+            sys.exit(1)
+        continue
