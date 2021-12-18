@@ -45,8 +45,6 @@ async def on_post_note(note):
                     async with session.get('https://api.github.com/repos/'+ config.GITHUB_RESPOSITORY_NAME +'/tags') as r:
                         tags = await r.json()
                         
-                        print(version)
-
                         # 最新バージョンを要求された場合
                         if '最新' in version:
                             version = tags[0]['name']
