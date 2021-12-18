@@ -49,7 +49,7 @@ async def on_post_note(note):
                                 args = [config.UPDATE_SCRIPT_PATH, version]
 
                                 try:
-                                    update_proc = await asyncio.create_subprocess_exec('/bin/bash', *args)
+                                    update_proc = await asyncio.create_subprocess_exec('/bin/bash', *args, cwd=config.MISSKEY_DIR)
                                 except:
                                     msk.notes_create(text='アップデートできなかった', reply_id=note['id'])
                                     return
