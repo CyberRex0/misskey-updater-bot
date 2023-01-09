@@ -49,36 +49,44 @@ async def on_post_note(note):
                         if '最新' in version:
                             version = tags[0]['name']
 
+                        tag_found = False
+
                         for tag in tags:
                             if tag['name'] == version:
-                                msk.notes_create(text='アップデートやっとく', reply_id=note['id'])
+                                tag_found = True
+                                msk.notes_create(text='アップデートを開始します', reply_id=note['id'])
 
                                 args = [config.UPDATE_SCRIPT_PATH, version]
 
                                 try:
-                                    update_proc = await asyncio.create_subprocess_exec('/bin/bash', *args, cwd=config.MISSKEY_DIR)
-                                except:
-                                    msk.notes_create(text='アップデートできなかった', reply_id=note['id'])
+                                    update_proc = await asyncio.create_subprocess_exec('/bin/bash', *args, cwd=config.MISSKEY_DIR, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT)
+                                except Exception as e:
+                                    with open('last_error.log', 'w') as f:
+                                        f.write(traceback.format_exc())
+                                    msk.notes_create(text='アップデートに失敗しました', reply_id=note['id'])
                                     return
                                 st = datetime.datetime.utcnow().timestamp()
-                                code = await update_proc.wait()
-                                if code != 0:
-                                    msk.notes_create(text=f'アップデートできなかった({code})', reply_id=note['id'])
+                                stdout, stderr = await update_proc.communicate()
+                                if update_proc.returncode != 0:
+                                    with open('last_error.log', 'w') as f:
+                                        f.write(stdout.decode())
+                                    msk.notes_create(text=f'アップデートに失敗しました(終了コード {update_proc.returncode})', reply_id=note['id'])
                                     return
                                 else:
                                     nt = datetime.datetime.utcnow().timestamp()
                                     t = nt - st
                                     tm = math.floor(t / 60)
                                     ts = math.floor(t % 60)
-                                    msk.notes_create(text=f'アップデートできたよ (実行時間: {t/60:02.0f}分{t%60:02.0f}秒)\n30秒後に再起動する', reply_id=note['id'])
-                                    await asyncio.sleep(30)
+                                    msk.notes_create(text=f'アップデートが完了しました (実行時間: {t/60:02.0f}分{t%60:02.0f}秒)\n15秒後に再起動します', reply_id=note['id'])
+                                    await asyncio.sleep(15)
                                     # 任意で再起動スクリプト実行
                                     args = [config.RESTART_SCRIPT_PATH]
                                     await asyncio.create_subprocess_exec('/bin/bash', *args, cwd=config.MISSKEY_DIR)
                                     return
+                        
+                        if not tag_found:
+                            msk.notes_create(text=f'{version} は存在しません', reply_id=note['id'])
                                 
-                        else:
-                            msk.notes_create(text=f'{version}←そんなの　ない', reply_id=note['id'])
 
 async def on_followed(user):
     try:
